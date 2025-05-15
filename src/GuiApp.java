@@ -2,7 +2,7 @@ import controllers.UserController;
 import controllers.QuizController;
 import controllers.QuestionController;
 import models.QuestionModel;
-
+import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -15,6 +15,13 @@ public class GuiApp {
     private QuestionController questionController;
 
     public GuiApp() {
+        // Set FlatLaf Look and Feel
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         userController = new UserController();
         quizController = new QuizController();
         questionController = new QuestionController();
@@ -23,10 +30,11 @@ public class GuiApp {
         frame = new JFrame("Quiz App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null); // Center the frame
 
         // Initialize the main panel
         mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setLayout(new GridBagLayout());
         frame.add(mainPanel);
 
         // Show the main menu
@@ -37,18 +45,28 @@ public class GuiApp {
 
     private void showMainMenu() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Add padding
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.weightx = 1;
 
         JLabel welcomeLabel = new JLabel("Welcome to Quiz App");
-        welcomeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(welcomeLabel);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(welcomeLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridy = 1;
         JButton registerButton = new JButton("Register");
-        registerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         registerButton.addActionListener(e -> showRegisterScreen());
-        mainPanel.add(registerButton);
+        mainPanel.add(registerButton, gbc);
 
+        gbc.gridy = 2;
         JButton loginLogoutButton = new JButton(userController.isLoggedIn() ? "Logout" : "Login");
-        loginLogoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         loginLogoutButton.addActionListener(e -> {
             if (userController.isLoggedIn()) {
                 userController.logout();
@@ -58,47 +76,49 @@ public class GuiApp {
                 showLoginScreen();
             }
         });
-        mainPanel.add(loginLogoutButton);
+        mainPanel.add(loginLogoutButton, gbc);
 
         if (userController.isLoggedIn()) {
             String role = userController.getLoggedInUser().getRole();
             if (role.equals("teacher")) {
+                gbc.gridy = 3;
                 JButton createQuizButton = new JButton("Create Quiz");
-                createQuizButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 createQuizButton.addActionListener(e -> showCreateQuizScreen());
-                mainPanel.add(createQuizButton);
+                mainPanel.add(createQuizButton, gbc);
 
+                gbc.gridy = 4;
                 JButton listQuizzesButton = new JButton("List Quizzes");
-                listQuizzesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 listQuizzesButton.addActionListener(e -> listQuizzes());
-                mainPanel.add(listQuizzesButton);
+                mainPanel.add(listQuizzesButton, gbc);
 
+                gbc.gridy = 5;
                 JButton addQuestionButton = new JButton("Add Question to Quiz");
-                addQuestionButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 addQuestionButton.addActionListener(e -> showAddQuestionScreen());
-                mainPanel.add(addQuestionButton);
-            } else if (role.equals("student")) {
-                JButton attemptQuizButton = new JButton("Attempt Quiz");
-                attemptQuizButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                attemptQuizButton.addActionListener(e -> showAttemptQuizScreen());
-                mainPanel.add(attemptQuizButton);
-            } else if (role.equals("admin")) {
-                JButton listUsersButton = new JButton("List All Users");
-                listUsersButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-                listUsersButton.addActionListener(e -> listAllUsers());
-                mainPanel.add(listUsersButton);
+                mainPanel.add(addQuestionButton, gbc);
 
+            } else if (role.equals("student")) {
+                gbc.gridy = 3;
+                JButton attemptQuizButton = new JButton("Attempt Quiz");
+                attemptQuizButton.addActionListener(e -> showAttemptQuizScreen());
+                mainPanel.add(attemptQuizButton, gbc);
+
+            } else if (role.equals("admin")) {
+                gbc.gridy = 3;
+                JButton listUsersButton = new JButton("List All Users");
+                listUsersButton.addActionListener(e -> listAllUsers());
+                mainPanel.add(listUsersButton, gbc);
+
+                gbc.gridy = 4;
                 JButton changeRoleButton = new JButton("Change User Role");
-                changeRoleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
                 changeRoleButton.addActionListener(e -> showChangeRoleScreen());
-                mainPanel.add(changeRoleButton);
+                mainPanel.add(changeRoleButton, gbc);
             }
         }
 
+        gbc.gridy++;
         JButton exitButton = new JButton("Exit");
-        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitButton.addActionListener(e -> System.exit(0));
-        mainPanel.add(exitButton);
+        mainPanel.add(exitButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -106,28 +126,45 @@ public class GuiApp {
 
     private void showRegisterScreen() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         JLabel registerLabel = new JLabel("Register");
-        registerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(registerLabel);
+        registerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(registerLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
         JTextField usernameField = new JTextField(20);
-        usernameField.setMaximumSize(usernameField.getPreferredSize());
-        mainPanel.add(new JLabel("Username:"));
-        mainPanel.add(usernameField);
+        mainPanel.add(usernameField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
         JPasswordField passwordField = new JPasswordField(20);
-        passwordField.setMaximumSize(passwordField.getPreferredSize());
-        mainPanel.add(new JLabel("Password:"));
-        mainPanel.add(passwordField);
+        mainPanel.add(passwordField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Role (student/teacher/admin):"), gbc);
+        gbc.gridx = 1;
         JTextField roleField = new JTextField(20);
-        roleField.setMaximumSize(roleField.getPreferredSize());
-        mainPanel.add(new JLabel("Role (student/teacher/admin):"));
-        mainPanel.add(roleField);
+        mainPanel.add(roleField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton registerButton = new JButton("Register");
-        registerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         registerButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -136,12 +173,12 @@ public class GuiApp {
             JOptionPane.showMessageDialog(frame, "Registration successful!");
             showMainMenu();
         });
-        mainPanel.add(registerButton);
+        mainPanel.add(registerButton, gbc);
 
+        gbc.gridy++;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -149,23 +186,38 @@ public class GuiApp {
 
     private void showLoginScreen() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         JLabel loginLabel = new JLabel("Login");
-        loginLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(loginLabel);
+        loginLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(loginLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
         JTextField usernameField = new JTextField(20);
-        usernameField.setMaximumSize(usernameField.getPreferredSize());
-        mainPanel.add(new JLabel("Username:"));
-        mainPanel.add(usernameField);
+        mainPanel.add(usernameField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
         JPasswordField passwordField = new JPasswordField(20);
-        passwordField.setMaximumSize(passwordField.getPreferredSize());
-        mainPanel.add(new JLabel("Password:"));
-        mainPanel.add(passwordField);
+        mainPanel.add(passwordField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton loginButton = new JButton("Login");
-        loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         loginButton.addActionListener(e -> {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -176,12 +228,12 @@ public class GuiApp {
                 JOptionPane.showMessageDialog(frame, "Invalid username or password.");
             }
         });
-        mainPanel.add(loginButton);
+        mainPanel.add(loginButton, gbc);
 
+        gbc.gridy++;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -189,23 +241,38 @@ public class GuiApp {
 
     private void showCreateQuizScreen() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         JLabel createQuizLabel = new JLabel("Create Quiz");
-        createQuizLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(createQuizLabel);
+        createQuizLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(createQuizLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Quiz Name:"), gbc);
+        gbc.gridx = 1;
         JTextField quizNameField = new JTextField(20);
-        quizNameField.setMaximumSize(quizNameField.getPreferredSize());
-        mainPanel.add(new JLabel("Quiz Name:"));
-        mainPanel.add(quizNameField);
+        mainPanel.add(quizNameField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Quiz Description:"), gbc);
+        gbc.gridx = 1;
         JTextField quizDescriptionField = new JTextField(20);
-        quizDescriptionField.setMaximumSize(quizDescriptionField.getPreferredSize());
-        mainPanel.add(new JLabel("Quiz Description:"));
-        mainPanel.add(quizDescriptionField);
+        mainPanel.add(quizDescriptionField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton createButton = new JButton("Create");
-        createButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         createButton.addActionListener(e -> {
             String quizName = quizNameField.getText();
             String quizDescription = quizDescriptionField.getText();
@@ -213,12 +280,12 @@ public class GuiApp {
             JOptionPane.showMessageDialog(frame, "Quiz created successfully!");
             showMainMenu();
         });
-        mainPanel.add(createButton);
+        mainPanel.add(createButton, gbc);
 
+        gbc.gridy++;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -226,22 +293,37 @@ public class GuiApp {
 
     private void listQuizzes() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
 
         JLabel listQuizzesLabel = new JLabel("List of Quizzes");
-        listQuizzesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(listQuizzesLabel);
+        listQuizzesLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        listQuizzesLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridwidth = 2;
+        mainPanel.add(listQuizzesLabel, gbc);
 
-        JTextArea quizzesArea = new JTextArea(10, 40);
+        JTextArea quizzesArea = new JTextArea();
         quizzesArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(quizzesArea);
-        mainPanel.add(scrollPane);
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        gbc.fill = GridBagConstraints.BOTH;
+        mainPanel.add(scrollPane, gbc);
 
         quizController.listAllQuizzes(1).forEach(quiz -> quizzesArea.append(quiz.toString() + "\n"));
 
+        gbc.gridy = 2;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -249,35 +331,52 @@ public class GuiApp {
 
     private void showAttemptQuizScreen() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         JLabel attemptQuizLabel = new JLabel("Attempt Quiz");
-        attemptQuizLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(attemptQuizLabel);
+        attemptQuizLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(attemptQuizLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Enter Quiz ID:"), gbc);
+        gbc.gridx = 1;
         JTextField quizIdField = new JTextField(20);
-        quizIdField.setMaximumSize(quizIdField.getPreferredSize());
-        mainPanel.add(new JLabel("Enter Quiz ID:"));
-        mainPanel.add(quizIdField);
+        mainPanel.add(quizIdField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton attemptButton = new JButton("Attempt");
-        attemptButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         attemptButton.addActionListener(e -> {
-            int quizId = Integer.parseInt(quizIdField.getText());
-            List<QuestionModel> questions = questionController.getQuestionsByQuizId(quizId);
+            try {
+                int quizId = Integer.parseInt(quizIdField.getText());
+                List<QuestionModel> questions = questionController.getQuestionsByQuizId(quizId);
 
-            if (questions.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "No questions found for this quiz!");
-                showMainMenu();
-            } else {
-                startQuiz(quizId, questions);
+                if (questions.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "No questions found for this quiz!");
+                    showMainMenu();
+                } else {
+                    startQuiz(quizId, questions);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid quiz ID.");
             }
         });
-        mainPanel.add(attemptButton);
+        mainPanel.add(attemptButton, gbc);
 
+        gbc.gridy++;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -285,33 +384,55 @@ public class GuiApp {
 
     private void startQuiz(int quizId, List<QuestionModel> questions) {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         JLabel questionLabel = new JLabel();
-        questionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(questionLabel);
+        questionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        mainPanel.add(questionLabel, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        JRadioButton optionA = new JRadioButton();
+        mainPanel.add(optionA, gbc);
+
+        gbc.gridy++;
+        JRadioButton optionB = new JRadioButton();
+        mainPanel.add(optionB, gbc);
+
+        gbc.gridy++;
+        JRadioButton optionC = new JRadioButton();
+        mainPanel.add(optionC, gbc);
+
+        gbc.gridy++;
+        JRadioButton optionD = new JRadioButton();
+        mainPanel.add(optionD, gbc);
 
         ButtonGroup optionsGroup = new ButtonGroup();
-        JRadioButton optionA = new JRadioButton();
-        JRadioButton optionB = new JRadioButton();
-        JRadioButton optionC = new JRadioButton();
-        JRadioButton optionD = new JRadioButton();
         optionsGroup.add(optionA);
         optionsGroup.add(optionB);
         optionsGroup.add(optionC);
         optionsGroup.add(optionD);
-        mainPanel.add(optionA);
-        mainPanel.add(optionB);
-        mainPanel.add(optionC);
-        mainPanel.add(optionD);
+
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         JButton nextButton = new JButton("Next");
-        nextButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(nextButton);
+        mainPanel.add(nextButton, gbc);
 
+        gbc.gridx = 1;
         JButton finishButton = new JButton("Finish");
-        finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         finishButton.setVisible(false);
-        mainPanel.add(finishButton);
+        mainPanel.add(finishButton, gbc);
 
         final int[] currentQuestionIndex = {0};
         final int[] totalScore = {0};
@@ -325,7 +446,7 @@ public class GuiApp {
             if (optionC.isSelected()) selectedAnswer = "C";
             if (optionD.isSelected()) selectedAnswer = "D";
 
-            if (selectedAnswer != null && selectedAnswer.equals(questions.get(currentQuestionIndex[0]).getAnswer())) {
+            if (selectedAnswer != null && selectedAnswer.equalsIgnoreCase(questions.get(currentQuestionIndex[0]).getAnswer())) {
                 totalScore[0] += questions.get(currentQuestionIndex[0]).getPts();
             }
 
@@ -336,6 +457,7 @@ public class GuiApp {
                 nextButton.setVisible(false);
                 finishButton.setVisible(true);
             }
+            optionsGroup.clearSelection();
         });
 
         finishButton.addActionListener(e -> {
@@ -360,22 +482,37 @@ public class GuiApp {
 
     private void listAllUsers() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
 
         JLabel listUsersLabel = new JLabel("List of All Users");
-        listUsersLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(listUsersLabel);
+        listUsersLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        listUsersLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridwidth = 2;
+        mainPanel.add(listUsersLabel, gbc);
 
-        JTextArea usersArea = new JTextArea(10, 40);
+        JTextArea usersArea = new JTextArea();
         usersArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(usersArea);
-        mainPanel.add(scrollPane);
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        gbc.fill = GridBagConstraints.BOTH;
+        mainPanel.add(scrollPane, gbc);
 
         userController.listAllUsers(1).forEach(user -> usersArea.append(user.toString() + "\n"));
 
+        gbc.gridy = 2;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -383,36 +520,55 @@ public class GuiApp {
 
     private void showChangeRoleScreen() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         JLabel changeRoleLabel = new JLabel("Change User Role");
-        changeRoleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(changeRoleLabel);
+        changeRoleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(changeRoleLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Enter User ID:"), gbc);
+        gbc.gridx = 1;
         JTextField userIdField = new JTextField(20);
-        userIdField.setMaximumSize(userIdField.getPreferredSize());
-        mainPanel.add(new JLabel("Enter User ID:"));
-        mainPanel.add(userIdField);
+        mainPanel.add(userIdField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Enter New Role (teacher/student):"), gbc);
+        gbc.gridx = 1;
         JTextField newRoleField = new JTextField(20);
-        newRoleField.setMaximumSize(newRoleField.getPreferredSize());
-        mainPanel.add(new JLabel("Enter New Role (teacher/student):"));
-        mainPanel.add(newRoleField);
+        mainPanel.add(newRoleField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton changeRoleButton = new JButton("Change Role");
-        changeRoleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         changeRoleButton.addActionListener(e -> {
-            int userId = Integer.parseInt(userIdField.getText());
-            String newRole = newRoleField.getText();
-            userController.changeUserRole(userId, newRole);
-            JOptionPane.showMessageDialog(frame, "User role updated successfully!");
-            showMainMenu();
+            try {
+                int userId = Integer.parseInt(userIdField.getText());
+                String newRole = newRoleField.getText();
+                userController.changeUserRole(userId, newRole);
+                JOptionPane.showMessageDialog(frame, "User role updated successfully!");
+                showMainMenu();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid User ID.");
+            }
         });
-        mainPanel.add(changeRoleButton);
+        mainPanel.add(changeRoleButton, gbc);
 
+        gbc.gridy++;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -420,79 +576,111 @@ public class GuiApp {
 
     private void showAddQuestionScreen() {
         mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         JLabel addQuestionLabel = new JLabel("Add Question to Quiz");
-        addQuestionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(addQuestionLabel);
+        addQuestionLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(addQuestionLabel, gbc);
 
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Enter Quiz ID:"), gbc);
+        gbc.gridx = 1;
         JTextField quizIdField = new JTextField(20);
-        quizIdField.setMaximumSize(quizIdField.getPreferredSize());
-        mainPanel.add(new JLabel("Enter Quiz ID:"));
-        mainPanel.add(quizIdField);
+        mainPanel.add(quizIdField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Enter Question Text:"), gbc);
+        gbc.gridx = 1;
         JTextField questionTextField = new JTextField(20);
-        questionTextField.setMaximumSize(questionTextField.getPreferredSize());
-        mainPanel.add(new JLabel("Enter Question Text:"));
-        mainPanel.add(questionTextField);
+        mainPanel.add(questionTextField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Option A:"), gbc);
+        gbc.gridx = 1;
         JTextField optionAField = new JTextField(20);
-        optionAField.setMaximumSize(optionAField.getPreferredSize());
-        mainPanel.add(new JLabel("Option A:"));
-        mainPanel.add(optionAField);
+        mainPanel.add(optionAField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Option B:"), gbc);
+        gbc.gridx = 1;
         JTextField optionBField = new JTextField(20);
-        optionBField.setMaximumSize(optionBField.getPreferredSize());
-        mainPanel.add(new JLabel("Option B:"));
-        mainPanel.add(optionBField);
+        mainPanel.add(optionBField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Option C:"), gbc);
+        gbc.gridx = 1;
         JTextField optionCField = new JTextField(20);
-        optionCField.setMaximumSize(optionCField.getPreferredSize());
-        mainPanel.add(new JLabel("Option C:"));
-        mainPanel.add(optionCField);
+        mainPanel.add(optionCField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Option D:"), gbc);
+        gbc.gridx = 1;
         JTextField optionDField = new JTextField(20);
-        optionDField.setMaximumSize(optionDField.getPreferredSize());
-        mainPanel.add(new JLabel("Option D:"));
-        mainPanel.add(optionDField);
+        mainPanel.add(optionDField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Correct Answer (A/B/C/D):"), gbc);
+        gbc.gridx = 1;
         JTextField correctAnswerField = new JTextField(20);
-        correctAnswerField.setMaximumSize(correctAnswerField.getPreferredSize());
-        mainPanel.add(new JLabel("Correct Answer (A/B/C/D):"));
-        mainPanel.add(correctAnswerField);
+        mainPanel.add(correctAnswerField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Points:"), gbc);
+        gbc.gridx = 1;
         JTextField pointsField = new JTextField(20);
-        pointsField.setMaximumSize(pointsField.getPreferredSize());
-        mainPanel.add(new JLabel("Points:"));
-        mainPanel.add(pointsField);
+        mainPanel.add(pointsField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton addButton = new JButton("Add Question");
-        addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addButton.addActionListener(e -> {
-            int quizId = Integer.parseInt(quizIdField.getText());
-            String questionText = questionTextField.getText();
-            String optionA = optionAField.getText();
-            String optionB = optionBField.getText();
-            String optionC = optionCField.getText();
-            String optionD = optionDField.getText();
-            String correctAnswer = correctAnswerField.getText();
-            int points = Integer.parseInt(pointsField.getText());
+            try {
+                int quizId = Integer.parseInt(quizIdField.getText());
+                String questionText = questionTextField.getText();
+                String optionA = optionAField.getText();
+                String optionB = optionBField.getText();
+                String optionC = optionCField.getText();
+                String optionD = optionDField.getText();
+                String correctAnswer = correctAnswerField.getText().toUpperCase();
+                int points = Integer.parseInt(pointsField.getText());
 
-            questionController.addQuestion(quizId, questionText, optionA, optionB, optionC, optionD, correctAnswer, points);
-            JOptionPane.showMessageDialog(frame, "Question added successfully!");
-            showMainMenu();
+                questionController.addQuestion(quizId, questionText, optionA, optionB, optionC, optionD, correctAnswer, points);
+                JOptionPane.showMessageDialog(frame, "Question added successfully!");
+                showMainMenu();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Please enter valid numeric values for Quiz ID and Points.");
+            }
         });
-        mainPanel.add(addButton);
+        mainPanel.add(addButton, gbc);
 
+        gbc.gridy++;
         JButton backButton = new JButton("Back");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> showMainMenu());
-        mainPanel.add(backButton);
+        mainPanel.add(backButton, gbc);
 
         mainPanel.revalidate();
         mainPanel.repaint();
     }
 
     public static void main(String[] args) {
-        new GuiApp();
+        SwingUtilities.invokeLater(GuiApp::new);
     }
 }
+
