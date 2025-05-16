@@ -22,6 +22,8 @@ public class QuizModel {
         this.teacherId = teacherId;
         this.name = name;
         this.description = description;
+        this.totalQuestions = 0;
+        this.totalPoints = 0;
     }
 
     // Getters and Setters

@@ -12,12 +12,15 @@ public class QuizDAO {
 
     // Method to insert a new quiz
     public void insertQuiz(QuizModel quiz) {
-        String query = "INSERT INTO quizzes (teacher_id, title, description) VALUES (?, ?, ?)";
+        // Added total_questions with default value 0 to avoid SQL error
+        String query = "INSERT INTO quizzes (teacher_id, title, description, total_questions,total_points) VALUES (?, ?, ?, ?,?)";
         try (Connection connection = database.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, quiz.getTeacherId());
             statement.setString(2, quiz.getName());
             statement.setString(3, quiz.getDescription());
+            statement.setInt(4, 0); // Set total_questions to 0 initially
+            statement.setInt(5, 0); // Set total_questions to 0 initially
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
