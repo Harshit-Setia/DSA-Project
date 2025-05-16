@@ -60,11 +60,15 @@ public class GuiApp {
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridy = 1;
-        JButton registerButton = new JButton("Register");
-        registerButton.addActionListener(e -> showRegisterScreen());
-        mainPanel.add(registerButton, gbc);
 
-        gbc.gridy = 2;
+        // Only show Register button if user is NOT logged in
+        if (!userController.isLoggedIn()) {
+            JButton registerButton = new JButton("Register");
+            registerButton.addActionListener(e -> showRegisterScreen());
+            mainPanel.add(registerButton, gbc);
+            gbc.gridy = 2;
+        }
+
         JButton loginLogoutButton = new JButton(userController.isLoggedIn() ? "Logout" : "Login");
         loginLogoutButton.addActionListener(e -> {
             if (userController.isLoggedIn()) {
