@@ -42,6 +42,17 @@ public class QuizAttemptDAO {
 
     // Method to fetch all quiz attempts for a specific quiz
     public List<String> getQuizAttemptsByQuizId(int quizId) {
+        // Inner class to hold attempt data
+        class Attempt {
+            String username;
+            int marks;
+            Attempt(String username, int marks) {
+                this.username = username;
+                this.marks = marks;
+            }
+        }
+
+        List<Attempt> attemptList = new ArrayList<>();
         List<String> attempts = new ArrayList<>();
         String query = "SELECT u.username, qa.marks_obtained FROM quiz_attempts qa " +
                        "JOIN users u ON qa.student_id = u.id WHERE qa.quiz_id = ?";
@@ -50,9 +61,15 @@ public class QuizAttemptDAO {
             statement.setInt(1, quizId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String result = "Student: " + resultSet.getString("username") +
-                                ", Marks: " + resultSet.getInt("marks_obtained");
-                attempts.add(result);
+                String username = resultSet.getString("username");
+                int marks = resultSet.getInt("marks_obtained");
+                attemptList.add(new Attempt(username, marks));
+            }
+            // Sort by marks descending
+            attemptList.sort((a, b) -> Integer.compare(b.marks, a.marks));
+            // Format output
+            for (Attempt att : attemptList) {
+                attempts.add("Student: " + att.username + ", Marks: " + att.marks);
             }
         } catch (SQLException e) {
             e.printStackTrace();
