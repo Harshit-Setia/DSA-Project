@@ -2,7 +2,6 @@ import controllers.UserController;
 import controllers.QuizController;
 import controllers.QuestionController;
 import models.QuestionModel;
-import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -17,7 +16,7 @@ public class GuiApp {
     public GuiApp() {
         // Set FlatLaf Look and Feel
         try {
-            UIManager.setLookAndFeel(new FlatLightLaf());
+           
         } catch (Exception e) {
             e.printStackTrace();
         }
