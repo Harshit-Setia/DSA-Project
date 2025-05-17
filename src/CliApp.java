@@ -44,8 +44,20 @@ public class CliApp {
 
             System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            int choice=0;
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                // Validate choice
+                if (choice < 1 || choice > 10) {
+                    System.out.println("Invalid choice. Please try again.");
+                    continue;
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine(); // Clear the invalid input
+            }
 
             switch (choice) {
                 case 1: // Register
