@@ -115,6 +115,11 @@ public class GuiApp {
                 JButton changeRoleButton = new JButton("Change User Role");
                 changeRoleButton.addActionListener(e -> showChangeRoleScreen());
                 mainPanel.add(changeRoleButton, gbc);
+
+                gbc.gridy = 5;
+                JButton viewUserButton = new JButton("View User by ID");
+                viewUserButton.addActionListener(e -> showViewUserScreen());
+                mainPanel.add(viewUserButton, gbc);
             }
         }
 
@@ -672,6 +677,54 @@ public class GuiApp {
             }
         });
         mainPanel.add(addButton, gbc);
+
+        gbc.gridy++;
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> showMainMenu());
+        mainPanel.add(backButton, gbc);
+
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    private void showViewUserScreen() {
+        mainPanel.removeAll();
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        JLabel viewUserLabel = new JLabel("View User Details");
+        viewUserLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(viewUserLabel, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy++;
+        mainPanel.add(new JLabel("Enter User ID:"), gbc);
+        gbc.gridx = 1;
+        JTextField userIdField = new JTextField(20);
+        mainPanel.add(userIdField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JButton viewButton = new JButton("View User");
+        viewButton.addActionListener(e -> {
+            try {
+                int userId = Integer.parseInt(userIdField.getText());
+                userController.getUserById(userId);
+                JOptionPane.showMessageDialog(frame, "User details displayed in console.");
+                showMainMenu();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid User ID.");
+            }
+        });
+        mainPanel.add(viewButton, gbc);
 
         gbc.gridy++;
         JButton backButton = new JButton("Back");

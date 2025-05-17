@@ -40,24 +40,13 @@ public class CliApp {
             if (userController.isLoggedIn() && userController.getLoggedInUser().getRole().equals("admin")) {
                 System.out.println("8. List All Users (Admin Only)");
                 System.out.println("9. Change User Role (Admin Only)");
+                System.out.println("11. View User by ID (Admin Only)");
             }
 
             System.out.println("10. Exit");
             System.out.print("Enter your choice: ");
-            int choice=0;
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // Consume newline
-
-                // Validate choice
-                if (choice < 1 || choice > 10) {
-                    System.out.println("Invalid choice. Please try again.");
-                    continue;
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid input. Please enter a number.");
-                scanner.nextLine(); // Clear the invalid input
-            }
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
 
             switch (choice) {
                 case 1: // Register
@@ -152,6 +141,17 @@ public class CliApp {
                         System.out.print("Enter new role (teacher/student): ");
                         String newRole = scanner.nextLine();
                         userController.changeUserRole(userId, newRole);
+                    } else {
+                        System.out.println("Access denied. Only admins can perform this action.");
+                    }
+                    break;
+
+                case 11: // View User by ID (Admin Only)
+                    if (userController.isLoggedIn() && userController.getLoggedInUser().getRole().equals("admin")) {
+                        System.out.print("Enter user ID to view: ");
+                        int userId = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+                        userController.getUserById(userId);
                     } else {
                         System.out.println("Access denied. Only admins can perform this action.");
                     }

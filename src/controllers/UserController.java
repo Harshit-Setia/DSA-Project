@@ -10,7 +10,7 @@ public class UserController {
     private UserModel loggedInUser = null; // Tracks the currently logged-in user
     
     // Cache for user lists (admin operations)
-    private final LRUCache<Integer, List<UserModel>> userListCache = new LRUCache<>(10);
+    private final LRUCache<Integer, List<UserModel>> userListCache = new LRUCache<>(20);
     // Cache for user role changes
     private final LRUCache<Integer, String> userRoleCache = new LRUCache<>(100);
 
@@ -122,7 +122,7 @@ public class UserController {
 
     // Method to log in a user with timing
     public boolean login(String username, String password) {
-        long startTime = System.nanoTime();
+        // long startTime = System.nanoTime();
         
         UserModel user = userDAO.login(username, password);
         if (user != null) {
@@ -134,9 +134,9 @@ public class UserController {
             System.out.println("Invalid username or password.");
         }
         
-        long endTime = System.nanoTime();
-        double duration = (endTime - startTime) / 1_000_000.0;
-        System.out.printf("Operation completed in %.3f ms%n", duration);
+        // long endTime = System.nanoTime();
+        // double duration = (endTime - startTime) / 1_000_000.0;
+        // System.out.printf("Operation completed in %.3f ms%n", duration);
         return user != null;
     }
 
