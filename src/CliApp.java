@@ -14,6 +14,7 @@ public class CliApp {
         while (true) {
             System.out.println("\n=== Quiz App ===");
             System.out.println("1. Register");
+            
 
             // Dynamically display Login or Logout based on login status
             if (userController.isLoggedIn()) {
